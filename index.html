@@ -246,6 +246,82 @@ div.center {
 	}
 	</style>
 
+
+<style>
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  height: 100%;
+}
+
+/* Container for Left, Center, Right */
+#container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+/* Panel styles */
+.left, .center, .right {
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+/* Desktop */
+.left {
+  flex: 1;
+  min-width: 250px;
+}
+.center {
+  flex: 2;
+  min-width: 500px;
+}
+.right {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* Make map responsive */
+#map {
+  width: 100%;
+  height: 60vh;
+}
+
+/* Make charts responsive */
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100%;
+}
+
+/* Controls styling */
+#controls {
+  margin-top: 10px;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+  #container {
+    flex-direction: column;
+  }
+
+  .left, .center, .right {
+    width: 100%;
+    min-width: auto;
+  }
+
+  #map {
+    height: 50vh;
+  }
+}
+
+</style>
+
+
 </head>
 <body>
 
