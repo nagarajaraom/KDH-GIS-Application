@@ -1,0 +1,817 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>KDH KSCST Projecet</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+
+
+	<link rel="stylesheet" href="/leaflet/leaflet.css" />
+	<script src="/leaflet/leaflet.js"></script>	
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.leaflet-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+	<style>#map { width: 1300px; height: 850px;}
+.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+.legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }</style>
+
+<style>
+
+.KDHProject {
+border: 1px solid black;
+background-color: rgb(148, 255, 250);
+text-align: center;
+margin: 10px;
+}
+
+div.left {
+    width: 300px;
+	height: 600px;
+    float: left;
+	margin: 10px;
+}
+
+div.right {
+    width: 300px;
+	height: 600px;
+    float: right;
+	margin: 10px;
+	
+}
+
+div.center {
+  margin: 10px;
+  width: 1100px;
+  border: 2px solid #73AD21;
+  }
+
+  .column {
+  float: left;
+  width: 30%;
+  padding: 5px;
+}
+
+.column1 {
+  float: left;
+  width: 30%;
+  padding: 30px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.row1::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+#container {
+  display: flex;                  /* establish flex container */
+  flex-direction: row;            /* default value; can be omitted */
+  flex-wrap: nowrap;              /* default value; can be omitted */
+  justify-content: space-between; /* switched from default (flex-start, see below) */
+ /* background-color: lightyellow;*/
+}
+#container > div {
+  width: 100%;
+  height: 100%;
+
+}
+
+#controls { margin: 10px; }
+
+.leaflet-popup-content table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .leaflet-popup-content td, .leaflet-popup-content th {
+    border: 1px solid #ddd;
+    padding: 5px;
+    font-size: 12px;
+  }
+  .popup-img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.popup-content {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  max-width: 800px;
+}
+.popup-content h4 {
+  margin: 0 0 5px;
+  font-size: 15px;
+  color: #2c3e50;
+}
+.popup-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.popup-table td {
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+}
+.popup-table td:first-child {
+  font-weight: bold;
+  background: #f4f4f4;
+  color: #34495e;
+}
+
+</style>
+
+<style>
+	#controls {
+	  margin: 20px;
+	  padding: 15px;
+	  background-color: #f0f8ff;
+	  border: 2px solid #007BFF;
+	  border-radius: 10px;
+	  width: 250px;
+	  font-family: Arial, sans-serif;
+	}
+  
+	#controls label {
+	  font-weight: bold;
+	  display: block;
+	  margin-bottom: 8px;
+	  color: #333;
+	}
+  
+	#csvSelect {
+	  width: 100%;
+	  padding: 8px;
+	  font-size: 16px;
+	  border: 1px solid #007BFF;
+	  border-radius: 5px;
+	  background-color: #fff;
+	  color: #333;
+	}
+  
+	#csvSelect:focus {
+	  outline: none;
+	  border-color: #0056b3;
+	  box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
+	}
+  </style>
+ 
+
+<style>
+	.district-label {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.2);
+}
+</style>
+
+
+ <style>
+	.KDHProject {
+	  background: linear-gradient(90deg, #bcf3f5, #f0dacb);
+	  border-bottom: 3px solid #026b5f;
+	  padding: 10px;
+	  text-align: center;
+	  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	}
+	
+	.KDHProject .row {
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
+	  flex-wrap: wrap;
+	  max-width: 1300px;
+	  margin: 0 auto;
+	}
+	
+	/*.KDHProject .column, 
+	.KDHProject .column1 {
+	  flex: 1;
+	  padding: 10px;
+	}*/
+	
+
+	.KDHProject .column1 {
+  	flex: 1;
+  	text-align: center;
+	  padding: 10px;
+	}
+
+	.KDHProject .column {
+  	flex: 2;
+  	text-align: center;
+	  padding: 10px;
+	}
+
+	.KDHProject .column1 img {
+	  max-width: 100%;
+	  height: auto;
+	}
+	
+	.KDHProject .column h2 {
+	  margin: 10px 0;
+	  font-size: 20px;
+	  color: #004d40;
+	}
+	</style>
+
+</head>
+<body>
+
+<!--<div id='map'></div>-->
+
+<div class="KDHProject">
+
+	<div class="row">
+
+		<div class="column1"><img src="KSCSTLogo.png" width="160px" height="90px" alt=""></div>
+
+		<div class="column"><h2>Department of Archaeology, Museums and Heritage <br> Government of Karnataka</h2>
+
+			<h2>Karnataka Digital Heritage</h2></div>
+
+		<div class="column1"><img src="GoK.png" width="100px" height="100px" alt=""></div>
+
+</div>
+
+
+</div>
+
+<div id="container">
+
+
+<div class="left">
+	<canvas id="myChart" style="width:250px;height:250px"></canvas><br>
+	<canvas id="myChart1" style="width:250px;height:250px"></canvas><br>
+	<!--<img src="images/templeImage1.png" width="300px" height="205px" alt="">-->
+</div>
+
+
+
+<div class="center"> 
+<div id='map'></div>
+</div>
+
+<div class="right">
+
+
+	<div id="controls">
+		<label for="csvSelect">Choose District:</label>
+		<select id="csvSelect">
+			
+			
+			<option value="csv/Bagalkote.csv">Bagalkote</option>
+			<option value="csv/Ballari.csv">Ballari</option>
+			<option value="csv/Belagavi.csv">Belagavi</option>
+			<option value="csv/Bengaluru_Rural.csv">Bengaluru Rural</option>
+			<option value="csv/Bengaluru Urban.csv">Bengaluru Urban</option>
+			<option value="csv/Bidar.csv">Bidar</option>
+			<option value="csv/Chamarajanagara.csv">Chamarajanagara</option>
+			<option value="csv/Chikkaballapura.csv">Chikkaballapura</option>
+			<option value="csv/Chikkamagaluru.csv">Chikkamagaluru</option>
+			<option value="csv/Chitradurga.csv">Chitradurga</option>
+			<option value="csv/Dakshina Kannada.csv">Dakshina Kannada</option>
+			<option value="csv/Davanagere.csv">Davanagere</option>
+			<option value="csv/Dharwad.csv">Dharwad</option>
+			<option value="csv/Gadag.csv">Gadag</option>
+			<option value="csv/Hassan.csv">Hassan</option>
+			<option value="csv/Haverii.csv">Haveri</option>
+			<option value="csv/Kalaburagi.csv">Kalaburagi</option>
+			<option value="csv/Kodagu.csv">Kodagu</option>
+			<option value="csv/Kolara.csv">Kolara</option>
+			<option value="csv/Koppala.csv">Koppala</option>
+			<option value="csv/Mandya.csv">Mandya</option>
+			<option value="csv/Mysuru.csv">Mysuru</option>
+			<option value="csv/Raichur.csv">Raichur</option>
+			<option value="csv/Ramanagara.csv">Ramanagara</option>
+			<option value="csv/Shivamogga.csv">Shivamogga</option>
+			<option value="csv/Tumakuru.csv">Tumakuru</option>
+			<option value="csv/Udupi.csv">Udupi</option>
+			<option value="csv/Uttara Kannada.csv">Uttara Kannada</option>
+			<option value="csv/Vijayanagar.csv">Vijayanagar</option>
+			<option value="csv/Vijayapura.csv">Vijayapura</option>
+			<option value="csv/Yadgir.csv">Yadgir</option>
+		</select>
+	  </div>
+
+
+	<canvas id="myChart2" style="width:380px;height:380px"></canvas><br>
+	<!--<img src="Beneficiary Image.png" width="450px" height="250px" alt="">-->
+
+</div>
+
+</div>
+
+<!--<script type="text/javascript" src="us-states.js"></script>-->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script type="text/javascript" src="KarnatakaMap.js"></script></script>
+<script type="text/javascript" src="MarkerScript.js"></script>
+<script type="text/javascript" src="Maps/HaveriMap.js"></script>
+
+
+<script type="text/javascript">
+
+
+
+	const map = L.map('map').setView([15, 75], 7);
+	//const map = L.map('map').fitWorld();
+
+	const csvLayerGroup = L.layerGroup().addTo(map);
+
+
+	const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(map);
+
+	// control that shows state info on hover
+	const info = L.control();
+
+	info.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'info');
+		this.update();
+		return this._div;
+	};
+
+	info.update = function (props) {
+		//const contents = props ? `<b>${props.name}</b><br />${props.density} people / mi<sup>2</sup>` : 'Hover over a states';
+		const contents = props ? `<b>${props.district}</b><br />${props.schools} Digitised Protected Monuments` : 'Hover over a districts';
+		this._div.innerHTML = `<h4>Number of Protected Monuments<br>under the KDH project in each districts </h4>${contents}`;
+	};
+
+	info.addTo(map);
+
+
+	// get color depending on population density value
+	function getColor(d) {
+		return d > 80  ? '#E31A1C' :
+			d > 60  ? '#FC4E2A' :
+			d > 40  ? '#FD8D3C' :
+			d > 20  ? '#FEB24C' :
+			d > 0  ? '#FED976' : '#FFEDA0';
+	}
+
+	function style(feature) {
+		return {
+			weight: 2,
+			opacity: 1,
+			color: 'black',
+			dashArray: '3',
+			fillOpacity: 0.7,
+			fillColor: getColor(feature.properties.schools)
+		};
+	}
+
+	function highlightFeature(e) {
+		const layer = e.target;
+
+		layer.setStyle({
+			weight: 4,
+			color: 'green',
+			dashArray: '',
+			fillOpacity: 0.7
+		});
+
+		layer.bringToFront();
+
+		info.update(layer.feature.properties);
+	}
+
+	/* global statesData */
+	 const geojson = L.geoJson(statesData, {
+		style,
+		onEachFeature
+	}).addTo(map);
+
+
+
+
+
+	/* const geojson = L.geoJson(statesData, {
+		style,
+		onEachFeature: function (feature, layer) {
+          if (feature.properties && feature.properties.district) {
+            layer.bindPopup(`<b>${feature.properties.district}</b>`);
+          }
+        }
+	}).addTo(map);*/
+	
+   
+
+
+
+
+
+	/*const geojson1 = L.geoJson(HaveriData, {
+		style,
+		onEachFeature
+	}).addTo(map);*/
+
+	function resetHighlight(e) {
+		geojson.resetStyle(e.target);
+		info.update();
+	}
+
+	function zoomToFeature(e) {
+		map.fitBounds(e.target.getBounds());
+	}
+
+	function onEachFeature(feature, layer) {
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
+			click: zoomToFeature
+		});
+	}
+
+	map.attributionControl.addAttribution('Information &copy; <a href="http://kscst.karnataka.gov.in/">Karnataka State Council for Science and Technology</a>');
+
+
+	const legend = L.control({position: 'bottomright'});
+
+	legend.onAdd = function (map) {
+
+		const div = L.DomUtil.create('div', 'info legend');
+		const grades = [0, 20, 40, 60, 80];
+		//const grades = [0, 1, 2, 3];
+		const labels = [];
+		let from, to;
+
+		for (let i = 0; i < grades.length; i++) {
+			from = grades[i];
+			to = grades[i + 1];
+
+			labels.push(`<i style="background:${getColor(from + 1)}"></i> ${from}${to ? `&ndash;${to}` : '+'}`);
+		}
+
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
+	legend.addTo(map);
+
+
+	// Create the control once and store the div reference
+	const districtLabelDiv = L.DomUtil.create('div', 'district-label');
+	const districtControl = L.control({ position: 'topleft' });
+
+	districtControl.onAdd = function () {
+    	return districtLabelDiv;
+	};
+
+districtControl.addTo(map); // Add it to map only once
+
+
+	const districtSelect = document.getElementById('csvSelect');
+  let selectedCSV = '';  // This variable will store the selected value
+
+  districtSelect.addEventListener('change', function () {
+  selectedCSV = this.value;
+  const selectedText = this.options[this.selectedIndex].text;
+  districtLabelDiv.innerHTML = `<strong>${selectedText}</strong>`;
+  map.setView([15, 75], 7, 19);
+
+  // 🧹 Clear previous markers
+  csvLayerGroup.clearLayers();
+
+  // Load and parse new CSV
+  Papa.parse(selectedCSV, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      results.data.forEach(function(row) {
+        const lat = parseFloat(row.Latitude);
+        const lon = parseFloat(row.Longitude);
+
+        if (!isNaN(lat) && !isNaN(lon)) {
+          const icon = L.icon({
+            iconUrl: row.iconUrl || 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+            iconSize: [40, 40],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+          });
+
+          let popupTable = `
+            <div class="popup-content">
+              <h4>${row.Name}</h4>
+              <img src="${row.ImageURL}" alt="${row.Name}" class="popup-img">
+              <table class="popup-table"><tbody>`;
+          
+				for (const key in row) {
+  					if (key === 'PDFLink' && row[key]) {
+    					popupTable += `<tr><td><strong>${key}</strong></td><td><a href="${row[key]}" target="_blank">3D point cloud data and Plan in PDF: open PDF</a></td></tr>`;
+  						} else if (!['ImageURL', 'iconUrl'].includes(key)) {
+    					popupTable += `<tr><td><strong>${key}</strong></td><td>${row[key]}</td></tr>`;
+  					}
+				}
+
+          popupTable += `</tbody></table></div>`;
+
+		  popupTable += `<tr>
+  			<td><strong>Download 3D point Cloud Data</strong></td>
+  			<td><span style="color:blue; text-decoration:underline; cursor:pointer;" onclick="alert('Requested data is more than 5GB!! Migration to Cloud service is under progress. Please conract Department of Archeology, Museums and Heritage (DAMH), Government of Karnataka for 3D point cloud data of Monuments https://archaeology.karnataka.gov.in ')">Click here</span></td>
+			</tr>`;
+
+
+          const marker = L.marker([lat, lon], { icon: icon }).bindPopup(popupTable);
+
+	
+
+
+          csvLayerGroup.addLayer(marker);  // 👈 Add marker to the group
+		  
+        }
+      });
+    }
+  });
+
+
+	//Marker
+
+	//const marker = L.marker([13.064499526371511, 77.43768674252692], {alt: ''}).addTo(map)
+	//	.bindPopup("<h2>Bengaluru Urban</h2><p>Morarji Desai Residential Science PU College, Adakamaranahalli, Bengaluru North</p><img src='./SchoolImages/AdakamaranahalliShow.png'/>")
+	//markerData();
+
+
+
+});
+
+// Trigger default selection on page load
+window.addEventListener('DOMContentLoaded', () => {
+  districtSelect.dispatchEvent(new Event('change'));
+});
+
+
+</script>
+
+<script>
+	var xValues = ["Temples", "Dargah", "Inscription", "Fort", "Palace", "Heritage Buildings", "Jain Basadi", "Others"];
+	var yValues = [350, 42, 31, 11, 5, 6, 13, 72];  
+	var barColors = [
+	  "#ff6f61", "#ffcc00", "#36a2eb", "#ff8c00", "#2ecc71", "#9b59b6", 
+	  "#f39c12", "#1abc9c", "#e74c3c" 
+	];
+  
+	new Chart("myChart", {
+	  type: "pie",
+	  data: {
+		labels: xValues,
+		datasets: [{
+		  backgroundColor: barColors,
+		  data: yValues
+		}]
+	  },
+	  options: {
+		title: {
+			fontColor: 'Maroon', 
+			  fontSize: 20,
+			  fontStyle: 'bold',
+		  display: true,
+		  text: "Distribution of Monuments by Type"
+		},
+		plugins: {
+		  tooltip: {
+			callbacks: {
+			  label: function(tooltipItem) {
+				return tooltipItem.label; // No change to tooltip label
+			  }
+			}
+		  }
+		},
+		// Customize the labels
+		responsive: true,
+		plugins: {
+		  legend: {
+			display: true // Hide legend if not needed
+		  },
+		  tooltip: {
+			enabled: true,
+		  }
+		},
+		// Set label font color to black
+		elements: {
+		  arc: {
+			borderWidth: 2
+		  }
+		},
+		scales: {
+		  x: {
+			ticks: {
+			  font: {
+				size: 8,
+				family: "Arial",
+				color: "white" 
+			  }
+			}
+		  },
+		  y: {
+			ticks: {
+			  font: {
+				size: 8,
+				family: "Arial",
+				color: "black" // Black color for the labels
+			  }
+			}
+		  }
+		}
+	  }
+	});
+  </script>
+  
+  
+
+
+<script>
+	var xValues = [
+  	["Bengaluru", "Division"],
+  	["Mysuru", "Division"],
+  	["Kalaburagi", "Division"],
+  	["Belagavi", "Division"]
+	];
+
+	var yValues = [97, 120, 101, 212];
+	var barColors = ["red", "green", "orange", "brown"];
+  
+	new Chart("myChart1", {
+	  type: "bar",
+	  data: {
+		labels: xValues,
+		datasets: [{
+		  backgroundColor: barColors,
+		  data: yValues
+		}]
+	  },
+	  options: {
+		plugins: {
+		  datalabels: {
+			anchor: 'end',
+			align: 'end',
+			color: 'black', // Value label color
+			font: {
+			  weight: 'bold',
+			  size: 12
+			}
+		  }
+		},
+		scales: {
+		  xAxes: [{
+			ticks: {
+			  fontColor: 'blue', // X-axis label color (Chart.js v2)
+			  fontSize: 12,
+			  fontStyle: 'bold'
+			}
+		  }],
+		  yAxes: [{
+			ticks: {
+			  fontColor: 'darkgreen', // Y-axis label color
+			  fontSize: 12
+			}
+		  }]
+		},
+		legend: { display: false },
+		title: {
+		  display: true,
+		  text: "Division-wise 3D Laser Scanning of Monuments",
+		  fontColor: 'maroon', // Title color
+		   fontSize: 18,            // 👈 Increase font size (e.g., 18px)
+  		   fontStyle: 'bold'
+		}
+	  },
+	  plugins: [ChartDataLabels]
+	});
+  </script>
+  
+  
+	
+
+
+  <script>
+	var xValues = [
+	  "Bagalkote", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", "Bidar", "Chamarajanagara",
+	  "Chikkaballapura", "Chikkamagaluru", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad",
+	  "Gadag", "Hassan", "Haveri", "Kalaburagi", "Kodagu", "Kolara", "Koppala", "Mandya", "Mysuru",
+	  "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada", "Vijayanagar", "Vijayapura", "Yadgiri"
+	];
+	var yValues = [
+	  16, 3, 31, 6, 6, 7, 8, 4, 13, 8, 1, 7, 22, 33, 27, 51, 24, 3, 14, 19, 30, 29, 29, 11, 12, 29, 9, 25, 4, 34, 15
+	];
+	var barColors = [
+	  "#e63946", "#2a9d8f", "#f4a261", "#264653", "#a8dadc", "#ffb703", "#6a4c93", "#ef476f", "#06d6a0", "#118ab2",
+	  "#073b4c", "#f77f00", "#d62828", "#003049", "#fcbf49", "#a2d2ff", "#b5838d", "#5e548e", "#9a8c98", "#3a86ff",
+	  "#ff006e", "#8338ec", "#ffbe0b", "#fb5607", "#8ecae6", "#219ebc", "#023047", "#ffb4a2", "#ff006e", "#f07167",
+	  "#adb5bd"
+	];
+  
+	new Chart("myChart2", {
+	  type: "doughnut",
+	  data: {
+		labels: xValues,
+		datasets: [{
+		  backgroundColor: barColors,
+		  data: yValues
+		}]
+	  },
+	  options: {
+		responsive: false,
+		maintainAspectRatio: false,
+		cutoutPercentage: 40, // Adjust the donut thickness (lower = thicker center)
+		title: {
+		  display: true,
+		  text: "District-wise Total No. of Monuments Scanned",
+		  fontColor: "blue",
+		  fontSize: 20
+		},
+		legend: {
+		  display: true // ✅ Hide legend to remove individual labels
+		},
+		tooltips: {
+		  enabled: true // ✅ Disable tooltips (hover value display)
+		},
+		// Customize the font size and color of the labels
+		plugins: {
+		  tooltip: {
+			callbacks: {
+			  label: function(tooltipItem) {
+				return tooltipItem.label; // No change to tooltip label
+			  }
+			}
+		  }
+		},
+		elements: {
+		  arc: {
+			borderWidth: 1
+		  }
+		},
+		// Adjust label font size and color here
+		responsive: true,
+		plugins: {
+		  legend: {
+			display: false, // Hide legend if not needed
+		  },
+		  tooltip: {
+			enabled: true,
+		  }
+		},
+		scales: {
+		  x: {
+			ticks: {
+			  font: {
+				size: 6,
+				family: "Arial",
+				color: "#000000" // Black color for the labels
+			  }
+			}
+		  },
+		  y: {
+			ticks: {
+			  font: {
+				size: 6,
+				family: "Arial",
+				color: "#000000" // Black color for the labels
+			  }
+			}
+		  }
+		}
+	  }
+	});
+  </script>
+  
+  
+
+
+
+</body>
+</html>
