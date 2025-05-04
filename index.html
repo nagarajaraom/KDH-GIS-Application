@@ -202,6 +202,7 @@ div.center {
 	  background: linear-gradient(90deg, #bcf3f5, #f0dacb);
 	  border-bottom: 3px solid #026b5f;
 	  padding: 10px;
+	  width: 100%;
 	  text-align: center;
 	  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	}
@@ -211,7 +212,7 @@ div.center {
 	  justify-content: space-between;
 	  align-items: center;
 	  flex-wrap: wrap;
-	  max-width: 1300px;
+	  max-width: 100%;
 	  margin: 0 auto;
 	}
 	
@@ -229,9 +230,11 @@ div.center {
 	}
 
 	.KDHProject .column {
-  	flex: 2;
+  	flex: 1;
   	text-align: center;
 	  padding: 10px;
+	  max-width: 100%;
+      height: auto;
 	}
 
 	.KDHProject .column1 img {
@@ -244,6 +247,13 @@ div.center {
 	  font-size: 15px;
 	  color: #004d40;
 	}
+
+	@media (max-width: 600px) {
+  .row {
+    flex-direction: column;
+    text-align: center;
+  }
+}
 	</style>
 
 
