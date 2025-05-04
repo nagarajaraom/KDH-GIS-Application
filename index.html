@@ -622,8 +622,13 @@ districtControl.addTo(map); // Add it to map only once
 			</tr>`;
 
 
-          const marker = L.marker([lat, lon], { icon: icon }).bindPopup(popupTable);
-
+          //const marker = L.marker([lat, lon], { icon: icon }).bindPopup(popupTable);
+		  const marker = L.marker([lat, lon], { icon: icon }).bindPopup(popupTable);
+		  marker.bindTooltip(row.Place, {
+            permanent: true,
+            direction: "right",
+            offset: [10, 0]
+          });
 	
 
 
